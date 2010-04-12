@@ -1,7 +1,6 @@
 <?
 
 $link = mysql_connect("127.0.0.1", "USERNAME", "PASSWORD") or die("no db connection: " . mysql_error());
-
 mysql_select_db("carousel") or die("could not select carousel db");
 
 function find_or_create_event($season_id, $track, $mod) {
@@ -75,8 +74,9 @@ function create_race($event_id, $timestring, $laps) {
     return $row->id;
   }
   $query = sprintf("insert into races (`event_id`, `race_time`, `laps`) values (%d, '%s', %d)",
-    $event_id,
-    mysql_real_escape_string($timestring));
+		   $event_id,
+		   mysql_real_escape_string($timestring),
+		   intval($laps));
   $res2 = mysql_query($query);
   if (!$res2) {die( "insert query failed: ".mysql_error());}
   $race_id = mysql_insert_id();

@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <?
 
+
 $link = mysql_connect("127.0.0.1", "USERNAME", "PASSWORD") or die("no db connection: " . mysql_error());
 mysql_select_db("carousel") or die("could not select carousel db");
 
 function format_time($secs) {
-  if (floatval($secs) > 0.0) {
-    return date("i:s", floatval($secs)).preg_replace('/^\d+/', '', (string)$secs);
+  $secs = floatval($secs);
+  if ($secs > 0.0) {
+    $usecs = $secs - floor($secs);
+    $hours = floor($secs / (60.0*60.0));
+    $rest = $secs % (60.0*60.0);
+    $minutes = floor($rest / (60.0));
+    $rest = $rest % (60.0);
+    $seconds = floor($rest);
+    $hours = $hours == 0.0 ? "" : sprintf("%02d:", $hours);
+    $usecs = preg_replace('/^0\./', "", sprintf("%.3f", $usecs));
+    return sprintf("%s%02d:%02d.%s", $hours, $minutes, $seconds, $usecs);
   } else {
     return "-";
   }
@@ -49,16 +59,22 @@ foreach ($events as $event) {
       }
       if ($result->laps_completed >= $race->laps) {
         if ($stats[$driver->name][$event->id]) {
-          if ($stats[$driver->name][$event->id]['race_time'] < $result->race_time) {
+          if ($stats[$driver->name][$event->id]['race_time'] > $result->race_time) {
+            $stats[$driver->name][$event->id]['result_id'] = $result->id;
             $stats[$driver->name][$event->id]['race_time'] = $result->race_time;
+            $stats[$driver->name][$event->id]['race_date'] = $race->race_time;
           }
-          if ($stats[$driver->name][$event->id]['best_lap'] < $result->best_lap) {
+          if ($stats[$driver->name][$event->id]['best_lap'] > $result->best_lap) {
             $stats[$driver->name][$event->id]['best_lap'] = $result->best_lap;
+            $stats[$driver->name][$event->id]['best_date'] = $race->race_time;
           }
         } else {
           $stats[$driver->name][$event->id] = Array();
           $stats[$driver->name][$event->id]['race_time'] = $result->race_time;
+          $stats[$driver->name][$event->id]['result_id'] = $result->id;
           $stats[$driver->name][$event->id]['best_lap'] = $result->best_lap;
+          $stats[$driver->name][$event->id]['race_date'] = $race->race_time;
+          $stats[$driver->name][$event->id]['best_date'] = $race->race_time;
         }
       }
     }
@@ -91,6 +107,36 @@ array_multisort($race_num, SORT_DESC, $total, SORT_ASC, $stats);
   <!--[if lt IE 8]>
     <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection">
   <![endif]-->
+  <style type="text/css" media="screen">
+    table.results {
+      border-width: 0px;
+      border-style: none;
+      border-color: gray;
+      border-collapse: collapse;
+      background-color: white;
+    }
+    table.results th {
+      border-width: 2px;
+      padding: 2px;
+      border-style: solid;
+      border-color: white;
+      background-color: #fd6;
+    }
+    table.results td {
+      border-width: 2px;
+      padding: 2px;
+      border-style: solid;
+      border-color: white;
+      background-color: #fd6;
+      vertical-align: top;
+    }
+    table.results tbody td.right {
+      text-align: right;
+    }
+    table.results thead td {
+      text-align: center;
+    }
+  </style>
   <script type="text/javascript" charset="utf-8" src="javascripts/jquery.js"></script>
 </head>
 <body>
@@ -124,8 +170,8 @@ array_multisort($race_num, SORT_DESC, $total, SORT_ASC, $stats);
         after installing the <a href="http://league.varjanta.com/downloads/file.php?id=507">mod</a> and the <a href="http://n2backmarkers.s3.amazonaws.com/etc_formula_armaroli_track_pack.7z">tracks</a></p>
         
 
-        <table>
-          <th>
+        <table class="results">
+          <thead>
             <tr>
               <td>Pos</td>
               <td>Driver</td>
@@ -134,7 +180,7 @@ array_multisort($race_num, SORT_DESC, $total, SORT_ASC, $stats);
               <? } ?>
               <td class="loud"><b>Total</b></td>
             </tr>
-          </th>
+          </thead>
           <tbody>
             <? $pos = 1 ?>
             <? foreach ($stats as $driver_name => $driverstats) { ?>
@@ -142,9 +188,14 @@ array_multisort($race_num, SORT_DESC, $total, SORT_ASC, $stats);
                 <td><?= $pos ?></td>
                 <td><?= $driver_name ?></td>
                 <? foreach ($events as $event) { ?>
-                  <td><?= format_time($driverstats[$event->id]['race_time']) ?> <br /><span class="small">Best lap: <?= format_time($driverstats[$event->id]['best_lap']) ?></span></td>
+                  <td class="right">
+                    <?= format_time($driverstats[$event->id]['race_time']) ?> <br />
+                    <span class="small"><?= $driverstats[$event->id]['race_date'] ?></span><br />
+                    <span class="small">BL: <?= format_time($driverstats[$event->id]['best_lap']) ?></span><br />
+                    <span class="small"><?= $driverstats[$event->id]['best_date'] ?></span>
+                  </td>
                 <? } ?>
-                <td class="loud"><b><?= format_time($driverstats['total']) ?></b></td>
+                <td class="loud right"><b><?= format_time($driverstats['total']) ?></b></td>
                 <? $pos++ ?>
               </tr>
             <? } ?>
