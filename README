@@ -6,3 +6,4 @@ report.php: receives the results files and stashes it to the database
 
 stats.php: displays race statistics
 
+etc.sql: database definitions (mysql)
