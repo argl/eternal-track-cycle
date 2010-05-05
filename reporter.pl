@@ -4,11 +4,11 @@ use LWP::UserAgent;
 use HTTP::Request::Common;
 use URI::Escape ('uri_escape');
 
-#$stats_dir = "c:\\Program Files\\rFactor\\UserData\\LOG\\Results\\"; 
-$stats_dir = "/tmp/"; 
+$stats_dir = "c:\\Program Files\\rFactor\\UserData\\LOG\\Results\\"; 
+#$stats_dir = "/tmp/"; 
 $interval = 10.0;
-#$post_url = "http://YOURHOST.com/report.php";
-$post_url = "http://localhost/report.php";
+$post_url = "http://YOURHOST.com/report.php";
+#$post_url = "http://localhost/report.php";
 $season_name = "SEASON NAME";
 
 sub post_file {
