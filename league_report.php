@@ -13,6 +13,7 @@
 # group_id is needed to integrate with the existing board data
 # for example, look up the group in cf_groups and put in the id in the group_id field of the league record
 
+# make sure drivers are member of the group, otherwise they will get kicked out of the final results
 
 # edit this for your settings:
 $link = mysql_connect("127.0.0.1", "andi", "bla") or die("no db connection: " . mysql_error());
