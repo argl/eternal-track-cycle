@@ -14,7 +14,7 @@
 # for example, look up the group in cf_groups and put in the id in the group_id field of the league record
 
 
-
+# edit this for your settings:
 $link = mysql_connect("127.0.0.1", "andi", "bla") or die("no db connection: " . mysql_error());
 mysql_select_db("varjanta_results") or die("could not select varjanta_results db");
 
