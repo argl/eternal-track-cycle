@@ -35,15 +35,6 @@ function mysql_get_list($query) {
 $seasons = mysql_get_list("select * from seasons order by id desc");
 $season = $seasons[0];
 $events = mysql_get_list("select * from events where season_id=".$season->id);
-$drivers = mysql_get_list("
-  select distinct d.*
-  from races r
-    join events e on r.event_id = e.id 
-    join results rs on r.id=rs.race_id 
-    join drivers d on rs.driver_id = d.id
-  where 
-    e.season_id=3
-    and rs.finish_status = 'Finished Normally'");
 
 $stats = Array();
 foreach ($events as $event) {
