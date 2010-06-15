@@ -84,6 +84,7 @@ from
 	join league_races r on rs.race_id=r.id
 where
 	r.league_id=$league->id
+	and rs.finished_status = 'Finished Normally'
 group by
 	d.user_id
 order by 
