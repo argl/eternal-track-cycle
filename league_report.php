@@ -134,7 +134,7 @@ function create_result($race_id, $driver_id, $finish_time, $finish_status, $best
 
 function distribute_points($race_id) {
   global $points;
-  $query = sprintf("select * from league_results where race_id=%d order and finish_status='Finished Normally' by position asc", $race_id);
+  $query = sprintf("select * from league_results where race_id=%d and finish_status='Finished Normally' order by position asc", $race_id);
   $results = mysql_get_list($query);
   $ct = 1;
   foreach ($results as $result) {
