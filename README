@@ -1,9 +1,14 @@
-Some tools to run the web frontend for rfc-style rfactor championships. rFactor is an awsome racing simulator by Image Space Incorporated: http://rfactor.net
+Some tools to run the web frontend for rfc-style rfactor championships and rfactor leagues. 
+rFactor is an awsome racing simulator by Image Space Incorporated: http://rfactor.net
 
 reporter.py: checks the rf results directory and POSTs new files to a website
 
-report.php: receives the results files and stashes it to the database
+report.php: receives the rfc results files and stashes it to the database
 
-stats.php: displays race statistics
+stats.php: displays rfc race statistics
 
 etc.sql: database definitions (mysql)
+
+league_report.php: receives league race results and puts it into the database. also gives points to drivers. integrated with the varjanta (wordpress?) user database
+
+league_stats.php: example frontend for displaying league results 
